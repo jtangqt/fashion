@@ -41,7 +41,6 @@ browser = webdriver.Chrome(executable_path='chromedriver', chrome_options=option
 base_url = 'https://us.shein.com/Women-Tops-c-2223.html?icn=women-tops&ici=us_tab01navbar02menu03&srctype=category&userpath=category%3EWOMEN%3ECLOTHING%3ETops&scici=navbar_2~~tab01navbar02menu03~~2_3~~real_2223~~~~0~~0'
 browser.get(base_url)
 all_tops_inventory = {}
-all_tops_description = {}
 
 total_items = browser.find_element_by_class_name("header-sum").text.split(" ")[0]
 pages = math.ceil(int(total_items)/120) #120 items per page
@@ -61,9 +60,10 @@ for top in all_tops_inventory:
     unparsed_spu = browser.find_element_by_class_name("j-expose__common-reviews__list-item").get_attribute('data-expose-id')
     spu = unparsed_spu.split('-')[3]
 
+    filename = 'data/' + spu + '.txt'
     reviews_filename = get_reviews(spu)
-
     name = browser.find_element_by_class_name("product-intro__head-name").text
+
     unparsed_main_pictures = browser.find_elements_by_class_name("product-intro__main-item")
     main_pic_urls = []
     for pic in unparsed_main_pictures:
@@ -76,15 +76,14 @@ for top in all_tops_inventory:
         key = li.find_element_by_class_name("key").get_attribute("innerHTML")
         val = li.find_element_by_class_name("val").get_attribute("innerHTML")
         clothing_desc[key[:-1]] = val
-    all_tops_description[spu] = {}
-    all_tops_description[spu]['name'] = name
-    all_tops_description[spu]['clothing_desc'] = clothing_desc
-    all_tops_description[spu]['product_pcs'] = main_pic_urls
-    all_tops_description[spu]['review_filename'] = reviews_filename
+
+    description = {'name': name,
+                   'clothing_desc': clothing_desc,
+                   'product_pcs': main_pic_urls,
+                   'review_filename': reviews_filename }
+    with open(filename, 'w') as f:
+        json.dump(description, f)
     break #todo: get rid of to run everything
-filename = 'data/desc.txt'
-with open(filename, 'w') as f:
-    json.dump(all_tops_description, f)
 browser.close()
 
 '''
