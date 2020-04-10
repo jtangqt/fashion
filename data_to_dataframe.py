@@ -26,6 +26,7 @@ for file in sorted(onlyfiles):
         values = [item_id, stars, comment, member_id, hips, waist, height, bra, weight, bust]
         member_dict = dict(zip(columns, values))
         df = df.append(member_dict, ignore_index = True)
+    print("finished file: {} out of {} files".format(file, len(onlyfiles)))
 
-
-
+df.to_csv("data/comments.csv")
+df.to_pickle("data/comments.pkl")
