@@ -125,6 +125,7 @@ browser.close()
 
 '''
 todo: 
+add price
 add all the urls that have been done before already so that it doesn't loop through those 
 check to see that there are reviews 
 size chart
