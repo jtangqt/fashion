@@ -17,7 +17,7 @@ def get_inventory(url):
             tops_url[href] = 0
     return tops_url
 
-def get_reviews(spu):
+def get_reviews(spu, filename):
     split = 50
     url ='https://us.shein.com/goods_detail/getCommentInfoByAbc?spu=' + spu + '&goods_id=&page=1&limit=' + str(split) + '&sort=&size=&is_picture='
     initial_response = requests.get(url = url)
@@ -33,11 +33,9 @@ def get_reviews(spu):
         comments.extend(reviews['info']['commentInfo'])
         if not i % 10:
             print("Info: copying {}/{} review pages".format(i, pages + 1))
-    filename = "data/reviews/" + spu + '.txt'
     with open(filename, 'w') as f:
         json.dump(comments, f)
         print("Info: succesfully saved comments into", filename)
-    return filename
 
 def get_all_inventory(present, all_tops_inventory):
     bad = {}
@@ -55,14 +53,14 @@ def get_all_inventory(present, all_tops_inventory):
                 bad[top] = 0
                 continue
         spu = unparsed_spu.split('-')[3]
-        if spu in present:
-            continue
-
-        filename = 'data/' + spu + '.txt'
         name = browser.find_element_by_class_name("product-intro__head-name").text
-
-        print("Info: getting information from item: {}".format(name))
-        reviews_filename = get_reviews(spu)
+        filename = 'data/' + spu + '.txt'
+        reviews_filename = "data/reviews/" + spu + '.txt'
+        if spu not in present:
+            print("Info: getting information from item: {}".format(name))
+            get_reviews(spu, reviews_filename)
+        else:
+            print("Info: skipping getting reviews for item: {}, already exists".format(name))
 
         unparsed_main_pictures = browser.find_elements_by_class_name("product-intro__main-item")
         main_pic_urls = []
@@ -81,11 +79,32 @@ def get_all_inventory(present, all_tops_inventory):
         if len(clothing_desc) > 0:
             print("Info: successfully saved descriptions")
 
+        model_stats = {}
+        try:
+            price_unparsed = browser.find_element_by_class_name("product-intro__head-price").find_element_by_class_name("original").get_attribute("innerHTML")
+            price = float(price_unparsed.split("$")[1])
+        except:
+            price_unparsed = browser.find_element_by_class_name("product-intro__head-price").find_element_by_class_name("discount").get_attribute("innerHTML")
+            price = float(price_unparsed.split("$")[1])
+        try:
+            model_description = browser.find_element_by_class_name("product-intro__sizeguide-summary-list")
+            model_info = model_description.find_elements_by_css_selector("div")
+            for info in model_info:
+                if len(info.find_elements_by_css_selector("div")) != 0:
+                    continue
+                key = info.get_attribute('innerHTML').split(":")[0].strip()
+                value = info.find_element_by_css_selector("span").get_attribute("innerHTML")
+                model_stats[key] = value
+        except:
+            print("Info: no model information for item")
+
         description = {'name': name,
                        'url': top,
                        'clothing_desc': clothing_desc,
+                       'price': price,
                        'product_pcs': main_pic_urls,
-                       'review_filename': reviews_filename }
+                       'review_filename': reviews_filename,
+                       'model_stats': model_stats }
         with open(filename, 'w') as f:
             json.dump(description, f)
             print("Info: successfully saved item information into file:", filename)
@@ -125,8 +144,5 @@ browser.close()
 
 '''
 todo: 
-add price
-add all the urls that have been done before already so that it doesn't loop through those 
-check to see that there are reviews 
 size chart
 '''

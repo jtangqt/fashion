@@ -109,6 +109,7 @@ def find_nearest(clusters, ex):
     ind = np.where(min == min.min())
     if len(ind[0]) == 1:
         return ind[0] + 1
+    # some clusters initially start at the same value so this splits between two equally
     return random.choice(ind[0]) + 1
 
 x = pd.DataFrame(data=x, columns=['Height (cm)', 'Weight (kg)', 'Bust (cm)', 'Waist (cm)', 'Hips (cm)', 'Band Size', 'Cup Size'])
