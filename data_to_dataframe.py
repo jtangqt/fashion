@@ -16,6 +16,7 @@ for file in sorted(onlyfiles):
     with open('data/' + file, 'r') as f:
         desc = f.read()
         description = json.loads(desc)
+        #todo: add model stats, price, name
     with open('data/reviews/' + file, 'r') as f:
         reviews = f.read()
         content = json.loads(reviews)
