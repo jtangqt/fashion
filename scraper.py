@@ -142,7 +142,3 @@ print(bad_2)
 
 browser.close()
 
-'''
-todo: 
-size chart
-'''

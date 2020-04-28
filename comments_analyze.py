@@ -102,7 +102,6 @@ if __name__ == "__main__":
     # PCA seems to not be the best in this situation since variance retained for k = 2 is around 61% and k = 3 is around 73%
 
     ###### Clustering ######
-
     x = pd.DataFrame(data=x, columns=['Height (cm)', 'Weight (kg)', 'Bust (cm)', 'Waist (cm)', 'Hips (cm)', 'Band Size', 'Cup Size'])
     k_error = []
     for k in range(1, x.shape[1] + 1):

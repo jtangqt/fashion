@@ -5,7 +5,7 @@ import pandas as pd
 
 data_folder = 'data'
 onlyfiles = [f for f in listdir(data_folder) if isfile(join(data_folder, f))]
-columns = ['Item ID', 'Description', 'Stars','Comment', 'Member ID', 'Hips (cm)', 'Waist (cm)', 'Height (cm)', 'Bra', 'Weight (kg)', 'Bust (cm)']
+columns = ['Item ID', 'Description', 'Stars','Comment', 'Member ID', 'Hips (cm)', 'Waist (cm)', 'Height (cm)', 'Bra', 'Weight (kg)', 'Bust (cm), Size']
 df = pd.DataFrame({}, columns=columns)
 
 for file in sorted(onlyfiles):
@@ -16,7 +16,7 @@ for file in sorted(onlyfiles):
     with open('data/' + file, 'r') as f:
         desc = f.read()
         description = json.loads(desc)
-        #todo: add model stats, price, name
+        #todo: add model stats, price
     with open('data/reviews/' + file, 'r') as f:
         reviews = f.read()
         content = json.loads(reviews)
@@ -30,7 +30,8 @@ for file in sorted(onlyfiles):
         bust = review['member_size']['member_bust'].split("cm")[0].strip()
         weight = review['member_size']['member_weight'].split("Kg")[0].strip()
         bra = review['member_size']['member_bra_size'].strip()
-        values = [item_id, description['clothing_desc'], stars, comment, member_id, hips, waist, height, bra, weight, bust]
+        size = review['size']
+        values = [item_id, description['clothing_desc'], stars, comment, member_id, hips, waist, height, bra, weight, bust, size]
         member_dict = dict(zip(columns, values))
         df = df.append(member_dict, ignore_index = True)
     print("finished file: {} out of {} files".format(file, len(onlyfiles)))
