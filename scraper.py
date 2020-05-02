@@ -19,7 +19,7 @@ def get_inventory(url):
 
 def get_reviews(spu, filename):
     split = 50
-    url ='https://us.shein.com/goods_detail/getCommentInfoByAbc?spu=' + spu + '&goods_id=&page=1&limit=' + str(split) + '&sort=&size=&is_picture='
+    url = 'https://us.shein.com/goods_detail_nsw/getCommentInfoByAbc?spu=' + spu + '&goods_id=&page=1&limit=' + str(split) + '&sort=&size=&is_picture='
     initial_response = requests.get(url = url)
     loaded_initial_response = json.loads(initial_response.text)
     max_length = loaded_initial_response['info']['allTotal']
@@ -27,7 +27,7 @@ def get_reviews(spu, filename):
     pages = math.ceil(max_length/split)
     comments = loaded_initial_response['info']['commentInfo']
     for i in range(1, pages+1):
-        url ='https://us.shein.com/goods_detail/getCommentInfoByAbc?spu=' + spu + '&goods_id=&page=' + str(i) + '&limit=' + str(split) +'&sort=&size=&is_picture='
+        url ='https://us.shein.com/goods_detail_nsw/getCommentInfoByAbc?spu=' + spu + '&goods_id=&page=' + str(i) + '&limit=' + str(split) +'&sort=&size=&is_picture='
         response = requests.get(url = url)
         reviews = json.loads(response.text)
         comments.extend(reviews['info']['commentInfo'])
