@@ -14,7 +14,7 @@ def gradient_descent(X, y, theta, iterations, alpha):
         cost = 1 / (2 * m) * np.sum((h - y) ** 2)
         theta = theta - alpha / m * np.dot(X.T, (h - y))
         j.append(cost)
-        if not i % 500:
+        if not i % 250:
             print("On iteration: {} out of {}".format(i, iterations))
     return theta, j
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # print(new_df.head())
 
     iterations = 1000
-    alpha = 0.0001
+    alpha = 0.000001
 
     # run gradient descent and plot cost on the j's
     theta, j = gradient_descent_on_fit(new_df, iterations, alpha)
