@@ -3,9 +3,13 @@ from os.path import isfile, join
 import json
 import pandas as pd
 
+
+
+
 data_folder = 'data'
 onlyfiles = [f for f in listdir(data_folder) if isfile(join(data_folder, f))]
-columns = ['Item ID', 'Description', 'Stars','Comment', 'Member ID', 'Hips (cm)', 'Waist (cm)', 'Height (cm)', 'Bra', 'Weight (kg)', 'Bust (cm), Size']
+columns = ['Item ID', 'Description', 'Price', 'Fit', 'Stars', 'Comment',
+           'Member ID', 'Hips (cm)', 'Waist (cm)', 'Height (cm)', 'Bra', 'Weight (kg)', 'Bust (cm)', 'Size']
 df = pd.DataFrame({}, columns=columns)
 
 for file in sorted(onlyfiles):
@@ -16,7 +20,7 @@ for file in sorted(onlyfiles):
     with open('data/' + file, 'r') as f:
         desc = f.read()
         description = json.loads(desc)
-        #todo: add model stats, price
+        # todo: add model stats, price
     with open('data/reviews/' + file, 'r') as f:
         reviews = f.read()
         content = json.loads(reviews)
@@ -24,6 +28,7 @@ for file in sorted(onlyfiles):
         stars = review['comment_rank'].strip()
         comment = review['content'].strip()
         member_id = review['member_id'].strip()
+        member_overall_fit = review["member_overall_fit"]
         hips = review['member_size']['member_hips'].split("cm")[0].strip()
         waist = review['member_size']['member_waist'].split("cm")[0].strip()
         height = review['member_size']['member_height'].split("cm")[0].strip()
@@ -31,10 +36,12 @@ for file in sorted(onlyfiles):
         weight = review['member_size']['member_weight'].split("Kg")[0].strip()
         bra = review['member_size']['member_bra_size'].strip()
         size = review['size']
-        values = [item_id, description['clothing_desc'], stars, comment, member_id, hips, waist, height, bra, weight, bust, size]
+        values = [item_id, description['clothing_desc'], description['price'], member_overall_fit, stars, comment,
+                  member_id, hips, waist, height, bra, weight, bust, size]
         member_dict = dict(zip(columns, values))
-        df = df.append(member_dict, ignore_index = True)
+        df = df.append(member_dict, ignore_index=True)
     print("finished file: {} out of {} files".format(file, len(onlyfiles)))
+    break
 
 df.to_csv("data/comments.csv")
 df.to_pickle("data/comments.pkl")

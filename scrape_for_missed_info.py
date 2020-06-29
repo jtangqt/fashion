@@ -9,7 +9,7 @@ print(onlyfiles)
 
 option = webdriver.ChromeOptions()
 option.add_argument("--incognito")
-browser = webdriver.Chrome(executable_path='chromedriver', chrome_options=option)
+browser = webdriver.Chrome(executable_path='chromedriver', options=option)
 
 for file in sorted(onlyfiles):
     item_id = file.split(".")[0]
